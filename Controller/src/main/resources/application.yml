@@ -1,0 +1,3 @@
+service:
+  security: security:9090
+  images: service:9091

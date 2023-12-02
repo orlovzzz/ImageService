@@ -1,0 +1,23 @@
+syntax = "proto3";
+option go_package = "example.com/project/protos/fizz";
+package com.example.grpc;
+
+message ImageRequest {
+  int32 userID = 1;
+  bytes image = 2;
+  string filename = 3;
+}
+
+message ImageResponse {
+  repeated bytes image = 1;
+  repeated string filename = 2;
+}
+
+message SuccessResponse {
+  bool success = 1;
+}
+
+service ImageService {
+  rpc AddImage(ImageRequest) returns (SuccessResponse);
+  rpc GetAllImages(ImageRequest) returns (ImageResponse);
+}

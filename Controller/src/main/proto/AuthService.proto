@@ -1,0 +1,24 @@
+syntax = "proto3";
+package com.example.grpc;
+
+message Request {
+  string username = 1;
+  string password = 2;
+}
+
+message Response {
+  bool success = 1;
+  string response = 2;
+}
+
+message User {
+  bool isSearch = 1;
+  int32 user_id = 2;
+  string username = 3;
+}
+
+service AuthService {
+  rpc registration(Request) returns (Response);
+  rpc login(Request) returns (Response);
+  rpc getUser(Request) returns (User);
+}

@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: img
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_USER: postgres
+
+  security:
+    build: 
+      dockerfile: ./jars/DockerfileSecurity
+    ports:
+      - 9090:9090
+    depends_on:
+      - db
+
+  client:
+    build:
+      dockerfile: ./jars/DockerfileClient
+    ports:
+      - 8080:8080
+
+  service:
+    build:
+      dockerfile: GoService/Dockerfile
+    ports:
+      - 9091:9091
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27016:27017"
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 80:80

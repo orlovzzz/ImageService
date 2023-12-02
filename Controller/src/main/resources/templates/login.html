@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .registration-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        .registration-form {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            padding: 8px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .form-group button {
+            padding: 10px;
+            background-color: #4caf50;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        h1, h2, p {
+            text-align: center;
+        }
+        #error {
+            color: red;
+        }
+    </style>
+    <!-- <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("regButton").addEventListener("click", function() {
+                var postData = {
+                    username: document.getElementById("username").value,
+                    password: document.getElementById("password").value
+                }
+                var tokenRequest = {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(postData)
+                }
+                fetch("/login", tokenRequest)
+                    .then(response => console.log(response))
+                    .catch(error => console.log(error))
+                    .then(data => {
+                        var jwt = data.jwt
+                        var redirectReq = {
+                            method: 'GET',
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Authorization":  jwt
+                            }
+                        }
+                        var success = data.success
+                        console.log(jwt)
+                        console.log(success)
+                        if (!success)
+                            fetch("/login", redirectReq).catch(error => console.log(error))
+                    })
+            })
+        })
+    </script> -->
+</head>
+<body>
+    <!-- <div class="registration-container">
+        <h1>Welcome</h1>
+        <h2>Login</h2>
+        <div class="registration-form">
+            <div class="form-group">
+                <input type="text" id="username" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" placeholder="Password" required>
+            </div>
+            <p id="error" th:text="${error}"></p>
+            <div class="form-group">
+                <button id="regButton">Login</button>
+            </div>
+            <p class="form-group">Don`t have account? <a href="/reg">Registration</a></p>
+        </div>
+    </div>    -->
+     <div class="registration-container">
+        <h1>Welcome</h1>
+        <h2>Login</h2>
+        <form class="registration-form" action="/login" method="post">
+            <div class="form-group">
+                <input type="text" id="username" name="username" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" name="password" placeholder="Password" required>
+            </div>
+            <p id="error" th:text="${error}"></p>
+            <div class="form-group">
+                <button type="submit">Login</button>
+            </div>
+            <p class="form-group">Don`t have account? <a href="/reg">Registration</a></p>
+        </form>
+    </div>
+</body>
+</html>
