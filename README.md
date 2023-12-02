@@ -8,14 +8,14 @@ Service to download your images
 * GRPC
 ## Start service
 
-Clone project
+* Clone project
 ```
 git clone https://github.com/orlovzzz/ImageService 
 ```
-Install and run Docker
-Open root directory
-Write ```docker compose up``` in terminal
-Go to the registration page in your browser
+* Install and run Docker
+* Open root directory
+* Write ```docker compose up``` in terminal
+* Go to the registration page in your browser
 ```
 http://localhost:80/reg
 ```
