@@ -1,16 +1,11 @@
 # MyImages 
--------------------------------------------------
 Service to download your images
 
 ### Technologies stack
--------------------------------------------------
 * Frontend: HTML, CSS
 * Backend: Spring Boot
 * Databases: MongoDB, PostgreSQL
 * GRPC
--------------------------------------------------
-
-
 ## Start service
 
 Clone project
