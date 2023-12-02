@@ -2,7 +2,7 @@
 Service to download your images
 
 ### Technologies stack
-* Frontend: HTML, CSS
+* Frontend: HTML
 * Backend: Spring Boot
 * Databases: MongoDB, PostgreSQL
 * GRPC
