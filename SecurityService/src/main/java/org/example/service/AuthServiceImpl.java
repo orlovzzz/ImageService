@@ -8,6 +8,9 @@ import org.example.entity.Users;
 import org.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @GrpcService
 public class AuthServiceImpl extends AuthServiceGrpc.AuthServiceImplBase {
 
@@ -73,5 +76,23 @@ public class AuthServiceImpl extends AuthServiceGrpc.AuthServiceImplBase {
                 .setIsSearch(true).setUsername(u.getUsername()).setUserId(u.getId()).build();
         responseObserver.onNext(user);
         responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getAllUsers(AuthServiceOuterClass.Request request, StreamObserver<AuthServiceOuterClass.AllUsers> responseObserver) {
+        List<Users> users = userRepository.findAll();
+        if (users != null) {
+            AuthServiceOuterClass.AllUsers allUsers = null;
+            List<AuthServiceOuterClass.User> grpcUsers = new ArrayList<>();
+            for (Users user : users) {
+                AuthServiceOuterClass.User temp = AuthServiceOuterClass.User.newBuilder().
+                        setIsSearch(true).setUsername(user.getUsername()).setUserId(user.getId()).build();
+                grpcUsers.add(temp);
+            }
+            allUsers = AuthServiceOuterClass.AllUsers.newBuilder()
+                    .addAllUsers(grpcUsers).build();
+            responseObserver.onNext(allUsers);
+            responseObserver.onCompleted();
+        }
     }
 }

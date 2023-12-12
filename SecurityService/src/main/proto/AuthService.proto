@@ -17,8 +17,13 @@ message User {
   string username = 3;
 }
 
+message AllUsers {
+  repeated User users = 1;
+}
+
 service AuthService {
   rpc registration(Request) returns (Response);
   rpc login(Request) returns (Response);
   rpc getUser(Request) returns (User);
+  rpc getAllUsers(Request) returns (AllUsers);
 }

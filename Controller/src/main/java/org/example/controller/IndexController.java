@@ -1,15 +1,15 @@
 package org.example.controller;
 
-import com.example.grpc.ImageRequest;
-import com.example.grpc.ImageResponse;
-import com.example.grpc.ImageServiceGrpc;
-import com.example.grpc.SuccessResponse;
+import com.example.grpc.*;
 import com.google.protobuf.ByteString;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
+import org.example.entity.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +28,9 @@ public class IndexController {
 
     @Autowired
     private ImageServiceGrpc.ImageServiceBlockingStub stub;
+
+    @Autowired
+    private AuthServiceGrpc.AuthServiceBlockingStub secStub;
 
     @GetMapping("/")
     public String getIndex(HttpSession session, Model model) {
@@ -58,6 +61,22 @@ public class IndexController {
         ImageRequest req = ImageRequest.newBuilder().setUserID(userId).setFilename(fileName).setImage(fileData).build();
         SuccessResponse response = stub.addImage(req);
         return "redirect:/";
+    }
+
+    @GetMapping("/getData")
+    public ResponseEntity<List<UserDTO>> getUserData() {
+        AuthServiceOuterClass.Request request = AuthServiceOuterClass.Request.newBuilder().build();
+        AuthServiceOuterClass.Users response = secStub.getAllUsers(request);
+        List<UserDTO> users = new ArrayList<>();
+        for (AuthServiceOuterClass.User user : response.getUsersList()) {
+            users.add(new UserDTO(user.getUserId(), user.getUsername(), 0));
+        }
+        for (UserDTO user : users) {
+            ImageRequest imageRequest = ImageRequest.newBuilder().setUserID(user.getId()).build();
+            ImgCount imageResponse = stub.getImgCount(imageRequest);
+            user.setImgCount(imageResponse.getImgCount());
+        }
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
 }

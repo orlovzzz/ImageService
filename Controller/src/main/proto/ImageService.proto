@@ -17,7 +17,12 @@ message SuccessResponse {
   bool success = 1;
 }
 
+message ImgCount {
+  int32 imgCount = 1;
+}
+
 service ImageService {
+  rpc GetImgCount(ImageRequest) returns (ImgCount);
   rpc AddImage(ImageRequest) returns (SuccessResponse);
   rpc GetAllImages(ImageRequest) returns (ImageResponse);
 }

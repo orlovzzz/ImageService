@@ -76,6 +76,34 @@ func (s *server) GetAllImages(ctx context.Context, request *rpc.ImageRequest) (*
 	}, nil
 }
 
+func (s *server) GetImgCount(ctx context.Context, request *rpc.ImageRequest) (*rpc.ImgCount, error) {
+	cursor, err := bucket.Find(bson.M{"metadata.user_id": request.UserID})
+	if err != nil {
+		log.Println("Error find images with user id: ", err)
+	}
+
+	var images [][]byte
+	var filenames []string
+	for cursor.Next(context.Background()) {
+		var file gridfs.File
+		if err := cursor.Decode(&file); err != nil {
+			log.Println("Error decode file: ", err)
+		}
+
+		filenames = append(filenames, file.Name)
+		downloadStream, err := bucket.OpenDownloadStream(file.ID)
+		if err != nil {
+			log.Println("Error get images from file: ", err)
+		}
+		imageData, err := io.ReadAll(downloadStream)
+		if err != nil {
+			log.Println("Error read image: ", err)
+		}
+		images = append(images, imageData)
+	}
+	return &rpc.ImgCount{ImgCount: int32(len(images))}, nil
+}
+
 func main() {
 	lis, err := net.Listen("tcp", ":9091")
 	if err != nil {

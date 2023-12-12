@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ImageServiceClient interface {
+	GetImgCount(ctx context.Context, in *ImageRequest, opts ...grpc.CallOption) (*ImgCount, error)
 	AddImage(ctx context.Context, in *ImageRequest, opts ...grpc.CallOption) (*SuccessResponse, error)
 	GetAllImages(ctx context.Context, in *ImageRequest, opts ...grpc.CallOption) (*ImageResponse, error)
 }
@@ -32,6 +33,15 @@ type imageServiceClient struct {
 
 func NewImageServiceClient(cc grpc.ClientConnInterface) ImageServiceClient {
 	return &imageServiceClient{cc}
+}
+
+func (c *imageServiceClient) GetImgCount(ctx context.Context, in *ImageRequest, opts ...grpc.CallOption) (*ImgCount, error) {
+	out := new(ImgCount)
+	err := c.cc.Invoke(ctx, "/com.example.grpc.ImageService/GetImgCount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *imageServiceClient) AddImage(ctx context.Context, in *ImageRequest, opts ...grpc.CallOption) (*SuccessResponse, error) {
@@ -56,6 +66,7 @@ func (c *imageServiceClient) GetAllImages(ctx context.Context, in *ImageRequest,
 // All implementations must embed UnimplementedImageServiceServer
 // for forward compatibility
 type ImageServiceServer interface {
+	GetImgCount(context.Context, *ImageRequest) (*ImgCount, error)
 	AddImage(context.Context, *ImageRequest) (*SuccessResponse, error)
 	GetAllImages(context.Context, *ImageRequest) (*ImageResponse, error)
 	mustEmbedUnimplementedImageServiceServer()
@@ -65,6 +76,9 @@ type ImageServiceServer interface {
 type UnimplementedImageServiceServer struct {
 }
 
+func (UnimplementedImageServiceServer) GetImgCount(context.Context, *ImageRequest) (*ImgCount, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetImgCount not implemented")
+}
 func (UnimplementedImageServiceServer) AddImage(context.Context, *ImageRequest) (*SuccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddImage not implemented")
 }
@@ -82,6 +96,24 @@ type UnsafeImageServiceServer interface {
 
 func RegisterImageServiceServer(s grpc.ServiceRegistrar, srv ImageServiceServer) {
 	s.RegisterService(&ImageService_ServiceDesc, srv)
+}
+
+func _ImageService_GetImgCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ImageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ImageServiceServer).GetImgCount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/com.example.grpc.ImageService/GetImgCount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ImageServiceServer).GetImgCount(ctx, req.(*ImageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _ImageService_AddImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -127,6 +159,10 @@ var ImageService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "com.example.grpc.ImageService",
 	HandlerType: (*ImageServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetImgCount",
+			Handler:    _ImageService_GetImgCount_Handler,
+		},
 		{
 			MethodName: "AddImage",
 			Handler:    _ImageService_AddImage_Handler,
